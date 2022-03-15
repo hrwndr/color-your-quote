@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import cooking from '../assets/cooking.gif'
 
 const Home = () => {
     const [quote, setQuote] = useState('')
@@ -12,6 +11,7 @@ const Home = () => {
     // const serverUrl = 'http://localhost:2525'
 
     const onFormSubmit = ev => {
+        setRes('')
         setIsLoading(true)
         ev.preventDefault()
         if (color !== '' && quote !== '') {
@@ -72,7 +72,15 @@ const Home = () => {
                                         Download PNG</a>
                                 </div>
                             </div>
-                        ) : isLoading ? <img src={cooking} alt="Generating image.." /> : ''
+                        ) : isLoading ? (
+                            <div className="w-100 d-flex justify-content-center align-items-center">
+                                <div className="spinner-border" style={{ width: '3rem', height: '3rem' }} role="status">
+                                    <span className="visually-hidden">Loading...</span>
+                                </div>
+                                <span className="fs-4 mx-2">Generating Image...</span>
+                            </div>
+
+                        ) : ''
                     }
 
                 </div>
