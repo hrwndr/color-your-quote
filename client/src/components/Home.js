@@ -5,7 +5,8 @@ const Home = () => {
     const [color, setColor] = useState('#ffffff')
     const [res, setRes] = useState('')
 
-    const serverUrl = 'http://localhost:2525'
+    const serverUrl = 'https://coloryourqoute.herokuapp.com'
+    // const serverUrl = 'http://localhost:2525'
 
     const onFormSubmit = ev => {
         ev.preventDefault()
