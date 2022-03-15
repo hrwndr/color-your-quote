@@ -1,14 +1,18 @@
 import React, { useState } from 'react'
+import cooking from '../assets/cooking.gif'
 
 const Home = () => {
     const [quote, setQuote] = useState('')
     const [color, setColor] = useState('#ffffff')
     const [res, setRes] = useState('')
+    const [isLoading, setIsLoading] = useState(false)
+
 
     const serverUrl = 'https://coloryourqoute.herokuapp.com'
     // const serverUrl = 'http://localhost:2525'
 
     const onFormSubmit = ev => {
+        setIsLoading(true)
         ev.preventDefault()
         if (color !== '' && quote !== '') {
             fetch(`${serverUrl}/generatequote`, {
@@ -18,7 +22,10 @@ const Home = () => {
                 },
                 body: JSON.stringify({ quote, color })
             }).then(res => res.json())
-                .then(data => setRes(data))
+                .then(data => {
+                    setIsLoading(false)
+                    setRes(data)
+                })
                 .catch(err => console.log(err))
         } else {
             alert('All fields are required!')
@@ -65,7 +72,7 @@ const Home = () => {
                                         Download PNG</a>
                                 </div>
                             </div>
-                        ) : ''
+                        ) : isLoading ? <img src={cooking} alt="Generating image.." /> : ''
                     }
 
                 </div>
