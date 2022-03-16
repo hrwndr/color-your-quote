@@ -17,25 +17,25 @@ app.post('/generatequote', async (req, res) => {
     if (quote != '' && color != '') {
         const d = new Date();
         let hour = d.getHours();
+        let nquote = quote.replace(' ', '')
+        console.log(nquote)
         const dataUri = await textToImage.generate(quote, {
             debug: true,
-            debugFilename: path.join(__dirname, 'images', `${quote}${hour}.png`),
+            debugFilename: path.join(__dirname, 'images', `${nquote}${hour}.png`),
             maxWidth: 1000,
             customHeight: 500,
             fontSize: 120,
             fontPath: path.join(__dirname, '/Lato-Regular.ttf'),
             fontFamily: 'Lato',
-            lineHeight: 30,
+            lineHeight: 135,
             margin: 20,
             bgColor: 'black',
-            textColor: color,
-            verticalAlign: 'center',
-            textAlign: 'center'
+            textColor: `hsla(${color.hue}, ${color.saturation * 100}%, ${color.brightness * 100}%, ${color.alpha})`,
         });
         res.json({
             status: 1,
             image: dataUri,
-            imgPath: `${quote}${hour}`
+            imgPath: `${nquote}${hour}`
         })
     }
 })

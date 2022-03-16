@@ -1,11 +1,21 @@
-import React, { useState } from 'react'
+import React, { useState, useCallback } from 'react'
+import { Card, Form, FormLayout, TextField, Button, ColorPicker, Layout } from '@shopify/polaris'
 
-const Home = () => {
+function Home() {
     const [quote, setQuote] = useState('')
-    const [color, setColor] = useState('#ffffff')
+    const [color, setColor] = useState({
+        hue: 300,
+        brightness: 1,
+        saturation: 0.7,
+        alpha: 0.7,
+    });
     const [res, setRes] = useState('')
     const [isLoading, setIsLoading] = useState(false)
 
+    const handleQuoteChange = useCallback((value) => {
+        setRes('')
+        setQuote(value)
+    }, []);
 
     const serverUrl = 'https://coloryourqoute.herokuapp.com'
     // const serverUrl = 'http://localhost:2525'
@@ -32,60 +42,57 @@ const Home = () => {
         }
     }
 
-
     return (
-        <div className="container mt-5">
-            <div className="row">
-                <div className="col-md-6 col-sm-12">
-                    <h2>Generate Colored Quotes</h2>
-                    <form onSubmit={onFormSubmit}>
-                        <div className="form-group">
-                            <label htmlFor="quote" className="form-label mt-4">Enter Quote</label>
-                            <input type="text" className="form-control" id="quote" placeholder="Eg. In a gentle way, you can shake the world." value={quote} onChange={e => setQuote(e.target.value)} />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="color" className="form-label mt-4">Select Color</label>
-                            <input type="color" className="form-control" value={color} onChange={e => setColor(e.target.value)} />
-                        </div>
-                        <button type="submit" className="btn btn-primary mt-3">
-                            Generate
-                            &nbsp;
-                            <svg xmlns="http://www.w3.org/2000/svg" width={16} height={16} fill="currentColor" className="bi bi-arrow-right" viewBox="0 0 16 16">
-                                <path fillRule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" />
-                            </svg>
-
-                        </button>
-                    </form>
-                </div>
-                <div className="col-sm-12 col-md-6 mt-5">
-                    {
-                        res !== '' ? (
-                            <div className="card">
-                                <img src={res.image} className="card-img-top" alt="Generated Quote Image" />
-                                <div className="card-body">
-                                    <a href={`${serverUrl}/${res.imgPath}.png`} target="_blank" className="btn btn-primary">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width={16} height={16} fill="currentColor" className="bi bi-download" viewBox="0 0 16 16">
-                                            <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z" />
-                                            <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z" />
-                                        </svg>
-                                        &nbsp;
-                                        Download PNG</a>
-                                </div>
-                            </div>
-                        ) : isLoading ? (
-                            <div className="w-100 d-flex justify-content-center align-items-center">
-                                <div className="spinner-border" style={{ width: '3rem', height: '3rem' }} role="status">
-                                    <span className="visually-hidden">Loading...</span>
-                                </div>
-                                <span className="fs-4 mx-2">Generating Image...</span>
-                            </div>
-
-                        ) : ''
-                    }
-
-                </div>
-            </div>
-        </div>
+        <div className="container mt-30">
+            <Layout>
+                <Layout.Section oneThird>
+                    <Card title="Generate Your Colored Quote">
+                        <Card.Section>
+                            <Form onSubmit={onFormSubmit}>
+                                <FormLayout>
+                                    <TextField
+                                        label="Quote"
+                                        value={quote}
+                                        onChange={handleQuoteChange}
+                                        type="text"
+                                        autoComplete="off"
+                                        helpText={
+                                            <span>
+                                                Enter your quote in the above field.
+                                            </span>
+                                        }
+                                    />
+                                    <ColorPicker label="Select Color" fullWidth onChange={setColor} color={color} allowAlpha />
+                                    <Button primary submit>Generate</Button>
+                                </FormLayout>
+                            </Form>
+                        </Card.Section>
+                    </Card>
+                </Layout.Section>
+                {
+                    res === '' ? (
+                        <Layout.Section oneThird>
+                            <Card title="Real Time View">
+                                <Card.Section>
+                                    <div className="realtimeview">
+                                        <span className="typedQuote" style={{ color: `hsla(${color.hue}, ${color.saturation * 100}%, ${color.brightness * 100}%, ${color.alpha})` }} >{quote}</span>
+                                    </div>
+                                </Card.Section>
+                            </Card>
+                        </Layout.Section>
+                    ) : isLoading ? 'Generating Image..' : (
+                        <Layout.Section oneThird>
+                            <Card title="Generated Image">
+                                <Card.Section>
+                                    <img src={res.image} style={{ width: '100%', marginBottom: '10px' }} />
+                                    <Button onClick={() => window.open(`${serverUrl}/${res.imgPath}.png`, '_blank')} primary>Download PNG</Button>
+                                </Card.Section>
+                            </Card>
+                        </Layout.Section>
+                    )
+                }
+            </Layout>
+        </div >
     )
 }
 
