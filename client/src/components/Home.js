@@ -17,7 +17,7 @@ function Home() {
         setQuote(value)
     }, []);
 
-    const serverUrl = '/'
+    const serverUrl = window.location.href
     // const serverUrl = 'http://localhost:2525'
 
     const onFormSubmit = ev => {
