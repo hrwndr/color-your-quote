@@ -3,7 +3,7 @@ const textToImage = require('text-to-image')
 const cors = require('cors')
 const path = require('path')
 
-const PORT = process.env.PORT || 2525
+const PORT = process.env.PORT || 80
 const app = express()
 app.use(express.json());
 app.use(cors())
