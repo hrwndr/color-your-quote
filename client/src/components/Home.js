@@ -17,7 +17,7 @@ function Home() {
         setQuote(value)
     }, []);
 
-    const serverUrl = 'https://coloryourqoute.herokuapp.com'
+    const serverUrl = '/'
     // const serverUrl = 'http://localhost:2525'
 
     const onFormSubmit = ev => {
