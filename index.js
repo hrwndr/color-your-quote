@@ -18,7 +18,7 @@ app.post('/generatequote', async (req, res) => {
     if (quote != '' && color != '') {
 
         try {
-            const directory = path.join(__dirname, 'images');
+            const directory = './images';
             fs.readdir(directory, (err, files) => {
                 if (err) throw err;
 
