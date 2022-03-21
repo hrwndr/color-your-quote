@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import { Card, Form, FormLayout, TextField, Button, ColorPicker, Layout } from '@shopify/polaris'
 
 function Home() {
@@ -13,19 +13,19 @@ function Home() {
     const [isLoading, setIsLoading] = useState(false)
 
     const handleQuoteChange = useCallback((value) => {
-        setRes('')
+        if (value.length == 0) setRes('')
         setQuote(value)
+    }, []);
+    const handleColorChange = useCallback((value) => {
+        setColor(value)
     }, []);
 
     const cUrl = window.location.href.toString()
     const serverUrl = cUrl.substr(0, cUrl.length - 1)
     // const serverUrl = 'http://localhost:2525'
 
-    const onFormSubmit = ev => {
-        setRes('')
-        setIsLoading(true)
-        ev.preventDefault()
-        if (color !== '' && quote !== '') {
+    useEffect(() => {
+        if (quote !== '') {
             fetch(`${serverUrl}/generatequote`, {
                 method: 'POST',
                 headers: {
@@ -34,14 +34,33 @@ function Home() {
                 body: JSON.stringify({ quote, color })
             }).then(res => res.json())
                 .then(data => {
+                    console.log(data)
                     setIsLoading(false)
                     setRes(data)
                 })
                 .catch(err => console.log(err))
-        } else {
-            alert('All fields are required!')
         }
-    }
+    }, [quote, color])
+
+    // const onFormSubmit = () => {
+    //     setIsLoading(true)
+    //     // ev.preventDefault()
+    // if (quote !== '') {
+    //     fetch(`${serverUrl}/generatequote`, {
+    //         method: 'POST',
+    //         headers: {
+    //             'content-type': 'application/json'
+    //         },
+    //         body: JSON.stringify({ quote, color })
+    //     }).then(res => res.json())
+    //         .then(data => {
+    //             console.log(data)
+    //             setIsLoading(false)
+    //             setRes(data)
+    //         })
+    //         .catch(err => console.log(err))
+    // }
+    // }
 
     return (
         <div className="container mt-30">
@@ -49,7 +68,7 @@ function Home() {
                 <Layout.Section oneThird>
                     <Card title="Generate Your Colored Quote">
                         <Card.Section>
-                            <Form onSubmit={onFormSubmit}>
+                            <Form onSubmit={() => console.log('This application works in real time. 🥳🥳')}>
                                 <FormLayout>
                                     <TextField
                                         label="Quote"
@@ -63,8 +82,8 @@ function Home() {
                                             </span>
                                         }
                                     />
-                                    <ColorPicker label="Select Color" fullWidth onChange={setColor} color={color} allowAlpha />
-                                    <Button primary submit>Generate</Button>
+                                    <ColorPicker label="Select Color" fullWidth onChange={handleColorChange} color={color} allowAlpha />
+                                    {/* <Button primary submit>Generate</Button> */}
                                 </FormLayout>
                             </Form>
                         </Card.Section>
@@ -83,7 +102,7 @@ function Home() {
                         </Layout.Section>
                     ) : isLoading ? 'Generating Image..' : (
                         <Layout.Section oneThird>
-                            <Card title="Generated Image">
+                            <Card title="Result">
                                 <Card.Section>
                                     <img src={res.image} style={{ width: '100%', marginBottom: '10px' }} />
                                     <Button onClick={() => window.open(`${serverUrl}/${res.imgPath}.png`, '_blank')} primary>Download PNG</Button>

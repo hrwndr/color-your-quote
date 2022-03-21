@@ -2,6 +2,7 @@ const express = require('express')
 const textToImage = require('text-to-image')
 const cors = require('cors')
 const path = require('path')
+const fs = require('fs')
 
 const PORT = process.env.PORT || 2525
 const app = express()
@@ -15,6 +16,22 @@ app.post('/generatequote', async (req, res) => {
     const { quote, color } = req.body
 
     if (quote != '' && color != '') {
+
+        try {
+            const directory = path.join(__dirname, 'images');
+            fs.readdir(directory, (err, files) => {
+                if (err) throw err;
+
+                for (const file of files) {
+                    fs.unlink(path.join(directory, file), err => {
+                        if (err) console.log(err);
+                    });
+                }
+            });
+        } catch (err) {
+            console.log(err)
+        }
+
         const d = new Date();
         let hour = d.getHours();
         let nquote = quote.replace(' ', '')
