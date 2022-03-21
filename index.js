@@ -20,7 +20,7 @@ app.post('/generatequote', async (req, res) => {
         try {
             const directory = './images';
             fs.readdir(directory, (err, files) => {
-                if (err) throw err;
+                if (err) console.log(err);
 
                 for (const file of files) {
                     fs.unlink(path.join(directory, file), err => {
